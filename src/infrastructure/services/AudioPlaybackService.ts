@@ -266,7 +266,36 @@ export class AudioPlaybackService {
 
   dispose(): void {
     this.stopStatusUpdate();
-    this.soundInstance = null;
+
+    if (this.soundInstance) {
+      this.soundInstance
+        .unloadAsync()
+        .catch(() => {
+          // Ignore cleanup errors
+        })
+        .finally(() => {
+          this.soundInstance = null;
+        });
+    } else {
+      this.soundInstance = null;
+    }
+
+    this.playback.reset();
+  }
+
+  async cleanup(): Promise<void> {
+    this.stopStatusUpdate();
+
+    if (this.soundInstance) {
+      try {
+        await this.soundInstance.unloadAsync();
+      } catch {
+        // Ignore cleanup errors
+      } finally {
+        this.soundInstance = null;
+      }
+    }
+
     this.playback.reset();
   }
 }

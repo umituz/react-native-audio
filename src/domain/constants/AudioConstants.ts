@@ -3,6 +3,7 @@ import {
   AudioChannel,
   AudioExtension,
   AudioFormat,
+  AudioModeConfig,
   AudioPlaybackOptions,
   AudioQuality,
   AudioRecordingConfig,
@@ -120,4 +121,14 @@ export const FILE_SIZE_LIMIT = {
   MEDIUM: 5 * 1024 * 1024, // 5MB
   LARGE: 10 * 1024 * 1024, // 10MB
   UNLIMITED: 0, // 0 means no limit
+} as const;
+
+/**
+ * Default audio mode configuration
+ */
+export const DEFAULT_AUDIO_MODE: AudioModeConfig = {
+  allowsRecordingIOS: true,
+  playsInSilentModeIOS: true,
+  staysActiveInBackground: false,
+  playsThroughEarpieceInAndroid: false,
 } as const;

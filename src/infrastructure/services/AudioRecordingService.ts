@@ -162,7 +162,36 @@ export class AudioRecordingService {
 
   dispose(): void {
     this.stopStatusUpdate();
-    this.recordingInstance = null;
+
+    if (this.recordingInstance) {
+      this.recordingInstance
+        .stopAndUnloadAsync()
+        .catch(() => {
+          // Ignore cleanup errors
+        })
+        .finally(() => {
+          this.recordingInstance = null;
+        });
+    } else {
+      this.recordingInstance = null;
+    }
+
+    this.recording.reset();
+  }
+
+  async cleanup(): Promise<void> {
+    this.stopStatusUpdate();
+
+    if (this.recordingInstance) {
+      try {
+        await this.recordingInstance.stopAndUnloadAsync();
+      } catch {
+        // Ignore cleanup errors
+      } finally {
+        this.recordingInstance = null;
+      }
+    }
+
     this.recording.reset();
   }
 }
