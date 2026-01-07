@@ -112,13 +112,46 @@ export function generateRecordingFilename(extension: AudioExtension): string {
 }
 
 /**
- * Format duration to human-readable string
+ * Format duration to human-readable string (MM:SS)
  */
 export function formatDuration(milliseconds: number): string {
   const totalSeconds = Math.floor(milliseconds / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
+
+  return `${minutes.toString().padStart(2, '0')}:${seconds
+    .toString()
+    .padStart(2, '0')}`;
+}
+
+/**
+ * Format duration to human-readable string with milliseconds (MM:SS:mmm)
+ */
+export function formatDurationWithMillis(milliseconds: number): string {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
   const millis = milliseconds % 1000;
+
+  return `${minutes.toString().padStart(2, '0')}:${seconds
+    .toString()
+    .padStart(2, '0')}:${millis.toString().padStart(3, '0')}`;
+}
+
+/**
+ * Format duration to human-readable string with hours (HH:MM:SS)
+ */
+export function formatDurationLong(milliseconds: number): string {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (hours > 0) {
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
 
   return `${minutes.toString().padStart(2, '0')}:${seconds
     .toString()
@@ -145,4 +178,66 @@ export async function isFormatSupported(format: AudioFormat): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+/**
+ * Calculate bytes from milliseconds for a given format and quality
+ */
+export function calculateFileSize(
+  durationMillis: number,
+  bitRate: number
+): number {
+  const durationSeconds = durationMillis / 1000;
+  return Math.floor((bitRate * durationSeconds) / 8);
+}
+
+/**
+ * Get file size in human-readable format
+ */
+export function formatFileSize(bytes: number): string {
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let size = bytes;
+  let unitIndex = 0;
+
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+
+  return `${size.toFixed(2)} ${units[unitIndex]}`;
+}
+
+/**
+ * Clamp value between min and max
+ */
+export function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+/**
+ * Convert milliseconds to seconds
+ */
+export function millisToSeconds(milliseconds: number): number {
+  return milliseconds / 1000;
+}
+
+/**
+ * Convert seconds to milliseconds
+ */
+export function secondsToMillis(seconds: number): number {
+  return seconds * 1000;
+}
+
+/**
+ * Check if value is valid volume (0-1)
+ */
+export function isValidVolume(volume: number): boolean {
+  return volume >= 0 && volume <= 1;
+}
+
+/**
+ * Check if value is valid playback rate (0.5-2.0)
+ */
+export function isValidPlaybackRate(rate: number): boolean {
+  return rate >= 0.5 && rate <= 2.0;
 }

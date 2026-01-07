@@ -169,10 +169,65 @@ export interface PlaybackResult {
 }
 
 /**
+ * Permission status
+ */
+export enum PermissionStatus {
+  UNDETERMINED = 'undetermined',
+  GRANTED = 'granted',
+  DENIED = 'denied',
+}
+
+/**
+ * Audio permission type
+ */
+export enum AudioPermission {
+  MICROPHONE = 'microphone',
+}
+
+/**
+ * Audio mode configuration for iOS/Android
+ */
+export interface AudioModeConfig {
+  allowsRecordingIOS: boolean;
+  playsInSilentModeIOS: boolean;
+  staysActiveInBackground: boolean;
+  playsThroughEarpieceInAndroid: boolean;
+}
+
+/**
+ * Progress callback for recording/playback
+ */
+export type ProgressCallback = (data: {
+  duration: number;
+  position?: number;
+  progress?: number;
+}) => void;
+
+/**
+ * Status change callback
+ */
+export type StatusChangeCallback<T> = (status: T) => void;
+
+/**
  * Audio error
  */
 export interface AudioError {
   code: string;
   message: string;
   details?: unknown;
+}
+
+/**
+ * Audio error class
+ */
+export class AudioErrorClass extends Error {
+  code: string;
+  details?: unknown;
+
+  constructor(code: string, message: string, details?: unknown) {
+    super(message);
+    this.name = 'AudioError';
+    this.code = code;
+    this.details = details;
+  }
 }
